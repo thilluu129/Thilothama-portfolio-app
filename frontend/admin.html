@@ -5,53 +5,428 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VT Portfolio | Admin Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ── Admin-specific styles ──────────────────────────── */
+        .admin-tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 14px;
+            padding: 6px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 110px;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--accent-gradient); color: #fff; }
+        .tab-btn:hover:not(.active) { background: var(--surface-color-solid); color: var(--text-main); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+        /* ── Section sub-headers ────────────────────────────── */
+        .admin-sub-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .admin-sub-header h2 { font-size: 1.4rem; }
+
+        /* ── Modal ──────────────────────────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: var(--surface-color-solid);
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform:none; } }
+        .modal-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
+        .modal-close {
+            position: absolute; top: 16px; right: 20px;
+            background: none; border: none; font-size: 1.5rem;
+            color: var(--text-muted); cursor: pointer; transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--danger-color); }
+
+        /* ── Form helpers ───────────────────────────────────── */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; padding-top: 8px; }
+        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent-color); cursor: pointer; }
+        .form-status { margin-top: 14px; font-size: 0.9rem; font-weight: 500; min-height: 20px; }
+
+        /* ── Table badges ───────────────────────────────────── */
+        .badge-yes { color: var(--success-color); font-weight: 700; }
+        .badge-no  { color: var(--text-muted); }
+
+        /* ── Message cards ──────────────────────────────────── */
+        .msg-card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 14px;
+            padding: 22px 26px;
+            margin-bottom: 14px;
+            transition: border-color 0.2s;
+        }
+        .msg-card:hover { border-color: var(--accent-color); }
+        .msg-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; flex-wrap: wrap; gap: 8px; }
+        .msg-name { font-weight: 700; font-size: 1rem; }
+        .msg-date { font-size: 0.8rem; color: var(--text-muted); }
+        .msg-email { font-size: 0.85rem; color: var(--accent-color); margin-bottom: 10px; }
+        .msg-text { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 14px; }
+        .msg-actions { display: flex; gap: 8px; }
+
+        /* ── Skill progress inline ──────────────────────────── */
+        .skill-bar-mini {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .skill-bar-mini .bar {
+            flex: 1; height: 6px; background: var(--bg-color);
+            border-radius: 4px; overflow: hidden; max-width: 100px;
+        }
+        .skill-bar-mini .bar-fill {
+            height: 100%; background: var(--accent-gradient); border-radius: 4px;
+        }
+
+        /* ── Logout ─────────────────────────────────────────── */
+        .logout-btn {
+            padding: 8px 18px; background: none;
+            border: 1px solid var(--danger-color); color: var(--danger-color);
+            border-radius: 8px; cursor: pointer; font-family: inherit;
+            font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .logout-btn:hover { background: var(--danger-color); color: #fff; }
+
+        /* ── Home edit form ─────────────────────────────────── */
+        .home-edit-card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        /* ── Action btn row in table ────────────────────────── */
+        .action-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* ── Empty state ────────────────────────────────────── */
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: var(--text-muted);
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    </style>
 </head>
 <body>
     <nav id="navbar">
         <a href="index.html" class="logo">VT. Admin</a>
-        <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</button>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button id="logout-btn" class="logout-btn" style="display:none;">⏏ Logout</button>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</button>
+        </div>
     </nav>
 
     <div class="admin-container">
-        <div id="login-section" style="display: block;">
+
+        <!-- ═══════════ LOGIN ═══════════ -->
+        <div id="login-section">
             <div class="contact-container">
-                <h2 style="margin-bottom: 20px;">Admin Authentication</h2>
+                <h2 style="margin-bottom:8px;">Admin Dashboard</h2>
+                <p style="color:var(--text-muted); margin-bottom:24px; font-size:0.9rem;">
+                    Enter your admin passcode to manage your portfolio.
+                </p>
                 <form id="login-form">
                     <div class="form-group">
                         <label>Admin Password</label>
                         <input type="password" id="admin-password" class="form-control" required placeholder="Enter passcode...">
                     </div>
-                    <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+                    <button type="submit" class="btn-primary" style="width:100%; border-radius:8px;">Unlock Dashboard</button>
                 </form>
-                <div id="login-status" style="margin-top: 15px; color: var(--danger-color);"></div>
+                <div id="login-status" style="margin-top:15px; font-size:0.9rem; text-align:center;"></div>
             </div>
         </div>
 
-        <div id="dashboard-section" style="display: none;">
-            <div class="admin-header">
-                <h2>Manage Projects</h2>
-                <button id="add-project-btn" class="btn-primary">Add New Project</button>
+        <!-- ═══════════ DASHBOARD ═══════════ -->
+        <div id="dashboard-section" style="display:none;">
+
+            <!-- Tab Bar -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="home">🏠 Home</button>
+                <button class="tab-btn" data-tab="projects">🗂 Projects</button>
+                <button class="tab-btn" data-tab="skills">⚡ Skills</button>
+                <button class="tab-btn" data-tab="messages">📩 Messages</button>
             </div>
-            
-            <table class="admin-table" id="projects-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Featured</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="projects-tbody">
-                    <!-- Populated via JS -->
-                </tbody>
-            </table>
+
+            <!-- ─── HOME TAB ─── -->
+            <div class="tab-panel active" id="tab-home">
+                <div class="admin-sub-header">
+                    <h2>Edit Home / Hero Section</h2>
+                    <span style="color:var(--text-muted); font-size:0.85rem;">Changes appear instantly on the live portfolio.</span>
+                </div>
+                <div class="home-edit-card">
+                    <form id="hero-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Your Name</label>
+                                <input type="text" id="hero-name-inp" class="form-control" placeholder="V THILOTHAMA">
+                            </div>
+                            <div class="form-group">
+                                <label>Tagline / Role</label>
+                                <input type="text" id="hero-tagline-inp" class="form-control" placeholder="Full-Stack Developer">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Hero Description</label>
+                            <textarea id="hero-desc-inp" class="form-control" style="min-height:100px;" placeholder="Brief intro shown in the hero section..."></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Badge Text</label>
+                                <input type="text" id="hero-badge-inp" class="form-control" placeholder="Available for Hire">
+                            </div>
+                            <div class="form-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="hero-available-inp">
+                                    <label for="hero-available-inp" style="margin:0; cursor:pointer; font-weight:500;">Show availability badge</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 24px 0 16px; font-size:1rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Social / Contact Links</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>GitHub URL</label>
+                                <input type="url" id="hero-github-inp" class="form-control" placeholder="https://github.com/...">
+                            </div>
+                            <div class="form-group">
+                                <label>LinkedIn URL</label>
+                                <input type="url" id="hero-linkedin-inp" class="form-control" placeholder="https://linkedin.com/in/...">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="hero-email-inp" class="form-control" placeholder="you@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Resume / CV URL</label>
+                                <input type="url" id="hero-resume-inp" class="form-control" placeholder="https://...">
+                            </div>
+                        </div>
+
+                        <div class="form-status" id="hero-form-status"></div>
+                        <button type="submit" class="btn-primary" style="width:100%; margin-top:16px; border-radius:8px;" id="hero-submit-btn">
+                            💾 Save Hero Content
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ─── PROJECTS TAB ─── -->
+            <div class="tab-panel" id="tab-projects">
+                <div class="admin-sub-header">
+                    <h2>Manage Projects</h2>
+                    <button id="add-project-btn" class="btn-primary">+ Add Project</button>
+                </div>
+                <table class="admin-table" id="projects-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Featured</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-tbody">
+                        <tr><td colspan="5" style="color:var(--text-muted)">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ─── SKILLS TAB ─── -->
+            <div class="tab-panel" id="tab-skills">
+                <div class="admin-sub-header">
+                    <h2>Manage Skills</h2>
+                    <button id="add-skill-btn" class="btn-primary">+ Add Skill</button>
+                </div>
+                <table class="admin-table" id="skills-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Skill</th>
+                            <th>Category</th>
+                            <th>Level</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="skills-tbody">
+                        <tr><td colspan="5" style="color:var(--text-muted)">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ─── MESSAGES TAB ─── -->
+            <div class="tab-panel" id="tab-messages">
+                <div class="admin-sub-header">
+                    <h2>Contact Messages</h2>
+                    <button onclick="fetchAdminMessages()" style="padding:10px 18px; background:var(--surface-color-solid); border:1px solid var(--surface-border); color:var(--text-main); border-radius:8px; cursor:pointer; font-family:inherit; font-weight:600;">
+                        ↻ Refresh
+                    </button>
+                </div>
+                <div id="messages-container">
+                    <p style="color:var(--text-muted)">Loading messages...</p>
+                </div>
+            </div>
+
+        </div><!-- end #dashboard-section -->
+    </div><!-- end .admin-container -->
+
+    <!-- ══════════ ADD / EDIT PROJECT MODAL ══════════ -->
+    <div class="modal-overlay" id="project-modal">
+        <div class="modal">
+            <button class="modal-close" id="close-project-modal">✕</button>
+            <h2 class="modal-title" id="project-modal-title">Add New Project</h2>
+            <form id="project-form">
+                <input type="hidden" id="project-id">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="proj-title" class="form-control" required placeholder="My Awesome Project">
+                </div>
+                <div class="form-group">
+                    <label>Short Description *</label>
+                    <textarea id="proj-description" class="form-control" required placeholder="Brief one-liner about the project..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Long Description</label>
+                    <textarea id="proj-long-desc" class="form-control" placeholder="Detailed description (optional)..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Tech Stack <small style="color:var(--text-muted)">(comma-separated)</small></label>
+                    <input type="text" id="proj-tech" class="form-control" placeholder="Python, Django, React">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="proj-category" class="form-control">
+                            <option value="fullstack">Full-Stack</option>
+                            <option value="frontend">Frontend</option>
+                            <option value="backend">Backend</option>
+                            <option value="data">Data / ML</option>
+                            <option value="game">Game / Fun</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Display Order</label>
+                        <input type="number" id="proj-order" class="form-control" value="0" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>GitHub URL</label>
+                        <input type="url" id="proj-github" class="form-control" placeholder="https://github.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>Live Demo URL</label>
+                        <input type="url" id="proj-live" class="form-control" placeholder="https://myapp.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="proj-image" class="form-control" placeholder="https://...jpg">
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="proj-featured">
+                        <label for="proj-featured" style="margin:0; cursor:pointer;">Mark as Featured</label>
+                    </div>
+                </div>
+                <div class="form-status" id="proj-form-status"></div>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:16px; border-radius:8px;" id="proj-submit-btn">
+                    ✅ Save Project
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- Modals for Add/Edit could be added here in a real production app -->
-    
+    <!-- ══════════ ADD / EDIT SKILL MODAL ══════════ -->
+    <div class="modal-overlay" id="skill-modal">
+        <div class="modal">
+            <button class="modal-close" id="close-skill-modal">✕</button>
+            <h2 class="modal-title" id="skill-modal-title">Add Skill</h2>
+            <form id="skill-form">
+                <input type="hidden" id="skill-id">
+                <div class="form-group">
+                    <label>Skill Name *</label>
+                    <input type="text" id="skill-name-inp" class="form-control" required placeholder="e.g. TypeScript">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="skill-cat-inp" class="form-control">
+                            <option value="language">Programming Language</option>
+                            <option value="frontend">Frontend</option>
+                            <option value="backend">Backend</option>
+                            <option value="database">Database</option>
+                            <option value="tools">Tools & DevOps</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Proficiency Level (0–100)</label>
+                        <input type="number" id="skill-level-inp" class="form-control" value="75" min="0" max="100">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Icon (emoji)</label>
+                        <input type="text" id="skill-icon-inp" class="form-control" placeholder="⚡">
+                    </div>
+                    <div class="form-group">
+                        <label>Display Order</label>
+                        <input type="number" id="skill-order-inp" class="form-control" value="0" min="0">
+                    </div>
+                </div>
+                <div class="form-status" id="skill-form-status"></div>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:16px; border-radius:8px;" id="skill-submit-btn">
+                    ✅ Save Skill
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script src="js/admin.js"></script>
 </body>
 </html>

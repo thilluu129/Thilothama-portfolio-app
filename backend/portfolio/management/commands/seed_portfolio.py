@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from portfolio.models import Project, Skill
+from portfolio.models import HeroContent, Project, Skill
 
 
 PROJECTS = [
@@ -87,12 +87,34 @@ SKILLS = [
 
 
 class Command(BaseCommand):
-    help = 'Seed the database with portfolio projects and skills'
+    help = 'Seed the database with portfolio projects, skills, and hero content'
 
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.WARNING('Clearing existing portfolio data...'))
         Project.objects.all().delete()
         Skill.objects.all().delete()
+
+        # Hero content — create or update the singleton row
+        self.stdout.write(self.style.MIGRATE_HEADING('Seeding hero content...'))
+        HeroContent.objects.update_or_create(
+            pk=1,
+            defaults={
+                'name': 'V THILOTHAMA',
+                'tagline': 'Full-Stack Developer',
+                'description': (
+                    'A passionate Full-Stack Developer specializing in Python, Django, '
+                    'Java, and modern web technologies. I build clean, powerful, and '
+                    'aesthetically pleasing applications.'
+                ),
+                'badge_text': 'Available for Hire',
+                'is_available': True,
+                'github_url': 'https://github.com/thilluu129',
+                'linkedin_url': '',
+                'email': '',
+                'resume_url': '',
+            }
+        )
+        self.stdout.write('  - Hero content seeded')
 
         self.stdout.write(self.style.MIGRATE_HEADING('Seeding projects...'))
         for data in PROJECTS:
@@ -105,5 +127,5 @@ class Command(BaseCommand):
             self.stdout.write(f"  - Created skill: {data['name']}")
 
         self.stdout.write(self.style.SUCCESS(
-            f'\nDone! Seeded {len(PROJECTS)} projects and {len(SKILLS)} skills.'
+            f'\nDone! Seeded hero content, {len(PROJECTS)} projects and {len(SKILLS)} skills.'
         ))

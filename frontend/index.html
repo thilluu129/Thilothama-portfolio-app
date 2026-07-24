@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>V THILOTHAMA | Full-Stack Developer</title>
+    <meta name="description" content="Portfolio of V THILOTHAMA — Full-Stack Developer specializing in Python, Django, Java, and modern web technologies.">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,7 +16,7 @@
     <nav id="navbar">
         <a href="#" class="logo">VT.</a>
         <ul class="nav-links">
-            <li><a href="#about">About</a></li>
+            <li><a href="#home">Home</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#contact">Contact</a></li>
@@ -26,10 +27,15 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content reveal">
-            <div class="badge">Available for Hire</div>
-            <h1>Hi, I'm <br><span>V THILOTHAMA</span></h1>
-            <p>A passionate Full-Stack Developer specializing in Python, Django, Java, and modern web technologies. I build clean, powerful, and aesthetically pleasing applications.</p>
-            <a href="#projects" class="btn-primary">Explore My Work</a>
+            <div class="badge" id="hero-badge">Available for Hire</div>
+            <h1>Hi, I'm <br><span id="hero-name">V THILOTHAMA</span></h1>
+            <p id="hero-desc">A passionate Full-Stack Developer specializing in Python, Django, Java, and modern web technologies. I build clean, powerful, and aesthetically pleasing applications.</p>
+            <div class="hero-cta-row">
+                <a href="#projects" class="btn-primary">Explore My Work</a>
+                <a href="#contact" class="btn-secondary">Get In Touch</a>
+            </div>
+            <!-- Social links — populated by JS if present in DB -->
+            <div class="hero-socials" id="hero-socials"></div>
         </div>
     </section>
 

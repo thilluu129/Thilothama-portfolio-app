@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Project, Skill, ContactMessage
+from .models import HeroContent, Project, Skill, ContactMessage
+
+
+@admin.register(HeroContent)
+class HeroContentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'tagline', 'is_available']
 
 
 @admin.register(Project)

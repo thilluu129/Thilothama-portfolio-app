@@ -18,3 +18,15 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         # Check custom passcode header X-Admin-Password
         admin_password = getattr(settings, 'PORTFOLIO_ADMIN_PASSWORD', 'admin123')
         return request.headers.get('X-Admin-Password') == admin_password
+
+
+class IsAdminUser(permissions.BasePermission):
+    """
+    Permission that requires the X-Admin-Password header for ALL methods
+    (including GET). Used for sensitive data like contact messages.
+    """
+    def has_permission(self, request, view):
+        if request.user and request.user.is_authenticated and request.user.is_staff:
+            return True
+        admin_password = getattr(settings, 'PORTFOLIO_ADMIN_PASSWORD', 'admin123')
+        return request.headers.get('X-Admin-Password') == admin_password
