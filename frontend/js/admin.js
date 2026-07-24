@@ -6,7 +6,7 @@ const isLocal = window.location.hostname === 'localhost' ||
 
 const API_BASE = isLocal
     ? 'http://127.0.0.1:8000/api'
-    : 'https://thilothama-portfolio-backend.onrender.com/api';
+    : 'https://thilothama-portfolio-app.onrender.com/api';
 
 let adminPasscode = sessionStorage.getItem('vt_admin_passcode') || null;
 
