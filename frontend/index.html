@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Abstract Background -->
+    <!-- Abstract Background Glows -->
     <div class="bg-glow"></div>
     <div class="bg-glow-2"></div>
 
-    <!-- Navigation -->
+    <!-- Navigation Bar -->
     <nav id="navbar">
-        <a href="#" class="logo">VT.</a>
+        <a href="#home" class="logo">VT.</a>
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#skills">Skills</a></li>
@@ -24,7 +24,7 @@
         <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</button>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- 1. Hero / Home Section -->
     <section class="hero" id="home">
         <div class="hero-content reveal">
             <div class="badge" id="hero-badge">Available for Hire</div>
@@ -34,32 +34,101 @@
                 <a href="#projects" class="btn-primary">Explore My Work</a>
                 <a href="#contact" class="btn-secondary">Get In Touch</a>
             </div>
-            <!-- Social links — populated by JS if present in DB -->
-            <div class="hero-socials" id="hero-socials"></div>
+            <div class="hero-socials" id="hero-socials">
+                <a href="https://github.com/thilluu129" target="_blank" class="social-link">🐙 GitHub</a>
+            </div>
         </div>
     </section>
 
-    <!-- Skills Section -->
+    <!-- 2. Skills Section -->
     <section id="skills">
         <h2 class="section-title reveal">Technical Skills</h2>
         <p class="section-subtitle reveal">Technologies I work with to build robust solutions.</p>
         <div class="skills-grid" id="skills-container">
-            <!-- Populated dynamically via JS -->
-            <p style="color: var(--text-muted);">Loading skills...</p>
+            <!-- Initial content (populated/hydrated via API) -->
+            <div class="skill-card reveal">
+                <h3>☕ Java</h3>
+                <div class="skill-info"><span>LANGUAGE</span><span>90%</span></div>
+                <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
+            </div>
+            <div class="skill-card reveal">
+                <h3>🐍 Python</h3>
+                <div class="skill-info"><span>LANGUAGE</span><span>85%</span></div>
+                <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+            </div>
+            <div class="skill-card reveal">
+                <h3>⚡ JavaScript</h3>
+                <div class="skill-info"><span>LANGUAGE</span><span>85%</span></div>
+                <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+            </div>
+            <div class="skill-card reveal">
+                <h3>🍃 Spring Boot</h3>
+                <div class="skill-info"><span>BACKEND</span><span>85%</span></div>
+                <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+            </div>
+            <div class="skill-card reveal">
+                <h3>🦄 Django</h3>
+                <div class="skill-info"><span>BACKEND</span><span>80%</span></div>
+                <div class="skill-bar"><div class="skill-progress" style="width: 80%"></div></div>
+            </div>
+            <div class="skill-card reveal">
+                <h3>🗄️ MySQL</h3>
+                <div class="skill-info"><span>DATABASE</span><span>80%</span></div>
+                <div class="skill-bar"><div class="skill-progress" style="width: 80%"></div></div>
+            </div>
         </div>
     </section>
 
-    <!-- Projects Section -->
+    <!-- 3. Projects Section -->
     <section id="projects">
         <h2 class="section-title reveal">Featured Projects</h2>
         <p class="section-subtitle reveal">A selection of my recent full-stack applications.</p>
         <div class="projects-grid" id="projects-container">
-            <!-- Populated dynamically via JS -->
-            <p style="color: var(--text-muted);">Loading projects...</p>
+            <!-- Initial content (populated/hydrated via API) -->
+            <div class="project-card reveal">
+                <h3>Student Management System</h3>
+                <div class="tech-stack">
+                    <span class="tech-tag">Java</span>
+                    <span class="tech-tag">MySQL</span>
+                    <span class="tech-tag">JDBC</span>
+                </div>
+                <p class="project-desc">Java application to manage student records using MySQL and JDBC with full CRUD capabilities.</p>
+                <div class="project-links">
+                    <a href="https://github.com/thilluu129/student-management-system" target="_blank">GitHub ↗</a>
+                </div>
+            </div>
+
+            <div class="project-card reveal">
+                <h3>Online Quiz System</h3>
+                <div class="tech-stack">
+                    <span class="tech-tag">Java</span>
+                    <span class="tech-tag">Spring Boot</span>
+                    <span class="tech-tag">Thymeleaf</span>
+                    <span class="tech-tag">MySQL</span>
+                </div>
+                <p class="project-desc">Full Stack Online Quiz Application using Spring Boot, Thymeleaf and MySQL for timed quizzes.</p>
+                <div class="project-links">
+                    <a href="https://github.com/thilluu129/online-quiz-system" target="_blank">GitHub ↗</a>
+                </div>
+            </div>
+
+            <div class="project-card reveal">
+                <h3>Portfolio Website</h3>
+                <div class="tech-stack">
+                    <span class="tech-tag">HTML</span>
+                    <span class="tech-tag">CSS</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">Django API</span>
+                </div>
+                <p class="project-desc">Responsive personal portfolio website integrated with Django REST API for dynamic content management.</p>
+                <div class="project-links">
+                    <a href="https://github.com/thilluu129/Thilothama-porfolio-app" target="_blank">GitHub ↗</a>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- 4. Contact Section -->
     <section id="contact">
         <h2 class="section-title reveal" style="text-align: center;">Let's Connect</h2>
         <p class="section-subtitle reveal" style="text-align: center;">Have a project in mind? I'd love to hear about it.</p>
