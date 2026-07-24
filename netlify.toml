@@ -1,8 +1,8 @@
-# Netlify configuration for V THILOTHAMA Portfolio Frontend
+# Netlify configuration
 
 [build]
-  # No build step needed — just static HTML/CSS/JS
-  publish = "frontend"
+  base = "frontend"
+  publish = "."
 
 [[headers]]
   for = "/*"
