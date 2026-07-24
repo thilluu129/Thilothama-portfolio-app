@@ -2,7 +2,7 @@
 
 [build]
   # No build step needed — just static HTML/CSS/JS
-  publish = "."
+  publish = "frontend"
 
 [[headers]]
   for = "/*"

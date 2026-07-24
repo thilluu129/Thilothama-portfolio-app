@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VT Portfolio | Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav id="navbar">
+        <a href="index.html" class="logo">VT. Admin</a>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</button>
+    </nav>
+
+    <div class="admin-container">
+        <div id="login-section" style="display: block;">
+            <div class="contact-container">
+                <h2 style="margin-bottom: 20px;">Admin Authentication</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>Admin Password</label>
+                        <input type="password" id="admin-password" class="form-control" required placeholder="Enter passcode...">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+                </form>
+                <div id="login-status" style="margin-top: 15px; color: var(--danger-color);"></div>
+            </div>
+        </div>
+
+        <div id="dashboard-section" style="display: none;">
+            <div class="admin-header">
+                <h2>Manage Projects</h2>
+                <button id="add-project-btn" class="btn-primary">Add New Project</button>
+            </div>
+            
+            <table class="admin-table" id="projects-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Featured</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="projects-tbody">
+                    <!-- Populated via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modals for Add/Edit could be added here in a real production app -->
+    
+    <script src="js/admin.js"></script>
+</body>
+</html>
