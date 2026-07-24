@@ -42,12 +42,13 @@ if (loginForm) {
         const pass = document.getElementById('admin-password').value.trim();
         const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-        loginStatus.textContent = 'Verifying...';
+        loginStatus.textContent = 'Verifying passcode...';
         loginStatus.style.color = 'var(--text-muted)';
         submitBtn.disabled = true;
 
         try {
-            const res = await fetch(`${API_BASE}/projects/`, {
+            // Test password against protected messages endpoint (which requires admin auth)
+            const res = await fetch(`${API_BASE}/messages/`, {
                 headers: { 'X-Admin-Password': pass }
             });
             if (res.ok) {
@@ -56,13 +57,12 @@ if (loginForm) {
                 loginStatus.textContent = '';
                 showDashboard();
             } else {
-                loginStatus.textContent = '❌ Wrong password. Try again.';
+                loginStatus.textContent = '❌ Incorrect password. (Default passcode is: admin123)';
                 loginStatus.style.color = 'var(--danger-color)';
             }
         } catch {
-            adminPasscode = pass;
-            sessionStorage.setItem('vt_admin_passcode', pass);
-            showDashboard();
+            loginStatus.textContent = '❌ Cannot connect to Django server at ' + API_BASE;
+            loginStatus.style.color = 'var(--danger-color)';
         } finally {
             submitBtn.disabled = false;
         }
@@ -160,6 +160,11 @@ if (heroForm) {
             if (res.ok) {
                 heroFormStatus.textContent = '✅ Hero content updated successfully!';
                 heroFormStatus.style.color = 'var(--success-color)';
+            } else if (res.status === 401 || res.status === 403) {
+                sessionStorage.removeItem('vt_admin_passcode');
+                adminPasscode = null;
+                heroFormStatus.textContent = '❌ Invalid passcode saved in session. Please click Logout (top-right) and re-enter: admin123';
+                heroFormStatus.style.color = 'var(--danger-color)';
             } else {
                 const err = await res.json();
                 heroFormStatus.textContent = `❌ Update failed: ${JSON.stringify(err)}`;
