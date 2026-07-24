@@ -82,10 +82,12 @@ async function fetchHeroContent() {
 // ── Skills ────────────────────────────────────────────────────────────────────
 async function fetchSkills() {
     const container = document.getElementById('skills-container');
+    if (!container) return;
     try {
         const res = await fetch(`${API_BASE}/skills/`);
-        if (!res.ok) throw new Error('Failed to load skills');
+        if (!res.ok) return;
         const skills = await res.json();
+        if (!Array.isArray(skills) || skills.length === 0) return;
 
         container.innerHTML = '';
         skills.forEach((skill, i) => {
@@ -106,17 +108,19 @@ async function fetchSkills() {
             revealObserver.observe(card);
         });
     } catch {
-        container.innerHTML = `<p style="color:var(--danger-color)">⚠️ Could not load skills. Is Django running?</p>`;
+        // Fail silently so pre-rendered static HTML cards remain visible
     }
 }
 
 // ── Projects ──────────────────────────────────────────────────────────────────
 async function fetchProjects() {
     const container = document.getElementById('projects-container');
+    if (!container) return;
     try {
         const res = await fetch(`${API_BASE}/projects/`);
-        if (!res.ok) throw new Error('Failed to load projects');
+        if (!res.ok) return;
         const projects = await res.json();
+        if (!Array.isArray(projects) || projects.length === 0) return;
 
         container.innerHTML = '';
         projects.forEach((proj, i) => {
@@ -142,7 +146,7 @@ async function fetchProjects() {
             revealObserver.observe(card);
         });
     } catch {
-        container.innerHTML = `<p style="color:var(--danger-color)">⚠️ Could not load projects.</p>`;
+        // Fail silently so pre-rendered static HTML cards remain visible
     }
 }
 
