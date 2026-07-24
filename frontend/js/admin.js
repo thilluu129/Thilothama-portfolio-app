@@ -1,5 +1,10 @@
 // ── API Base URL (auto-detects local vs production) ──────────────────────────
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+const isLocal = window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1' ||
+                window.location.hostname === '' ||
+                window.location.protocol === 'file:';
+
+const API_BASE = isLocal
     ? 'http://127.0.0.1:8000/api'
     : 'https://thilothama-portfolio-backend.onrender.com/api';
 
